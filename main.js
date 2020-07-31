@@ -1,10 +1,11 @@
 const express = require('express')
 const logger = require('morgan')
 const bodyParser = require('body-parser')
+const path = require('path')
 require('dotenv').config()
 
 const server = express()
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 3000
 
 
 //App Setup
@@ -41,6 +42,6 @@ server.use(function(err, req, res, next) {
 
 
 //Server Listning
-server.listen(()=>{
+server.listen(3000 || PORT, ()=>{
 	console.log(`Server listing at port ${PORT || 3000}`)
 })
