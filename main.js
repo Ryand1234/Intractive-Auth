@@ -44,33 +44,45 @@ MongoClient.connect(MONGO_URI, (err, client)=>{
 			})
 
 			socket.on('id',(data)=>{
-				socket.email = data.email;
-				socket.index += 1;
-				socket.emit("auth", question[socket.index])
+				socket.email = data.data;
+				socket.emit("auth", question[data.index])
 			})
+
 			socket.on('username',(data)=>{
-				socket.username = data.username;
-				socket.index += 1;
-				socket.emit("auth", question[socket.index])
+				socket.username = data.data;
+				socket.emit("auth", question[data.index])
 			})
+
 			socket.on('name',(data)=>{
-				socket.name = data.name;
-				socket.index += 1;
-				socket.emit("auth", question[socket.index])
+				socket.name = data.data;
+				socket.emit("auth", question[data.index])
 			})
+
 			socket.on('number',(data)=>{
-				socket.number = data.number;
-				socket.index += 1;
-				socket.emit("auth", question[socket.index])
+				socket.number = data.data;
+				socket.emit("auth", question[data.index])
 			})
+
 			socket.on('passwd',(data)=>{
-				socket.password = data.password;
-				socket.index += 1;
-				socket.emit("auth", question[socket.index])
+				socket.password = data.data;
+				socket.emit("auth", question[data.index])
 			})
+
 			socket.on('dob',async(data)=>{
-				socket.dob = data.dob;
-				axios(options)
+				const options = {
+					url: 'http://localhost:3000/register',
+					method: "POST",
+					data: {
+						email: socket.email,
+						username: socket.username,
+						password: socket.password,
+						mobile: socket.number,
+						dob: data.data,
+						name: socket.name
+					}
+				}
+
+				await axios(options)
 				  .then((res)=>{
 					socket.emit("auth", "Thank you for Registering!!\nVisit /login to login to the Platform.")		
 				  })
