@@ -9,7 +9,6 @@ router.post('/', async(req, res)=>{
 
 	const crypt_pass = bcrypt.hashSync(req.body.password, SALT)
 
-	console.log("P: ", crypt_pass)
 	var new_user = {
 		name: req.body.name,
 		username: req.body.username,
