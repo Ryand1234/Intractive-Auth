@@ -7,7 +7,7 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:5000/iauth'
 
 router.post('/', async(req, res)=>{
 
-
+try{
 	await MongoClient.connect(MONGO_URI, async (err, client)=>{
 
 		if(err){
@@ -28,6 +28,10 @@ router.post('/', async(req, res)=>{
 			
 		})
 	})
+}
+catch{
+	res.status(501);
+}
 })
 
 module.exports = router;

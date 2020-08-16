@@ -9,13 +9,18 @@ const { MongoClient, ObjectId } = require('mongodb')
 const app = express()
 const PORT = process.env.PORT || 3000
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:5000/iauth'
-const question = [
+const register_ques = [
 	"Enter Your Email Id",
 	"Enter Your Username",
 	"Enter Your Name",
 	"Enter Your Password",
 	"Enter Your Mobile Number",
 	"Enter Your DOB"
+]
+
+const login_ques = [
+	"Enter Your Email Id",
+	"Enter Your Password"
 ]
 
 //App Setup
@@ -43,29 +48,30 @@ MongoClient.connect(MONGO_URI, (err, client)=>{
 				socket.index = 0;
 			})
 
+			//Registration Sockets
 			socket.on('id',(data)=>{
 				socket.email = data.data;
-				socket.emit("auth", question[data.index])
+				socket.emit("auth", register_ques[data.index])
 			})
 
 			socket.on('username',(data)=>{
 				socket.username = data.data;
-				socket.emit("auth", question[data.index])
+				socket.emit("auth", register_ques[data.index])
 			})
 
 			socket.on('name',(data)=>{
 				socket.name = data.data;
-				socket.emit("auth", question[data.index])
+				socket.emit("auth", register_ques[data.index])
 			})
 
 			socket.on('number',(data)=>{
 				socket.number = data.data;
-				socket.emit("auth", question[data.index])
+				socket.emit("auth", register_ques[data.index])
 			})
 
 			socket.on('passwd',(data)=>{
 				socket.password = data.data;
-				socket.emit("auth", question[data.index])
+				socket.emit("auth", register_ques[data.index])
 			})
 
 			socket.on('dob',async(data)=>{
@@ -88,6 +94,32 @@ MongoClient.connect(MONGO_URI, (err, client)=>{
 				  })
 				  .catch((err)=>{
 				  	socket.emit("auth", "Error Occured During Registering!!!!!!\nPlease try again later")
+				  })
+			})
+
+			//Login Sockets
+			socket.on('login_id',(data)=>{
+				socket.login_email = data.data;
+				socket.emit("login", login_ques[data.index])
+			})
+
+			socket.on('login_passwd',async (data)=>{
+				socket.login_password = data.data;
+				const login_options = {
+					method: "POST",
+					url: "http://localhost:3000/login",
+					data: {
+						email: socket.login_email,
+						password: socket.login_password
+					}
+				}
+
+				await axios(login_options)
+				  .then((res)=>{
+				  		socket.emit('login', "Logged In");
+				  })
+				  .catch((err)=>{
+				  		socket.emit('login', "Wrong Email/Password");
 				  })
 			})
 		})	
